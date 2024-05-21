@@ -2,7 +2,11 @@ const http= require('http');
 const express = require('express');
 const users = require('./MOCK_DATA.json');
 const Port = 8000
+const fs = require('fs');
+
 const app= express();
+
+app.use(express.urlencoded({extended: false}))
 
 app.get('/api/users',(req, res)=>{
     return res.json(users);
@@ -14,11 +18,17 @@ app.get('/api/users/:id',(req, res)=>{
     return res.json(user);
 });
 //add
-app.post('/api/users', (re, res)=>{
-    console.log("new user")
+app.post('/api/users', (req, res)=>{
+const body= req.body;
+users.push({...body, id: users.length+1});
+fs.writeFileSync('./MOCK_DATA.json', JSON.stringify(users),(err, data)=>{
+    return res.json({status:"ok"});
+} )
+
 })
+
 //update
-app.patch('/api/users/:id', (re, res)=>{
+app.patch('/api/users/:id', (req, res)=>{
     return res.json({status:"ok"});
 })
 
